@@ -1,0 +1,15 @@
+.hj-host {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hj-host__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hj-host__canvas[hidden] {
+  display: none;
+}

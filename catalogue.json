@@ -1,0 +1,60 @@
+{
+  "project": "herosjourney",
+  "effects": [
+    {
+      "id": "hello",
+      "title": "Hello",
+      "summary": "The smallest effect: soft colour turning slowly in a six-fold mirrored rosette, folded by the symmetry library and coloured in OKLCH, in one fragment pass through the HDR tail. Every later effect starts from this shape.",
+      "epic": "1",
+      "tier": "A",
+      "tags": [
+        "scaffold",
+        "symmetry",
+        "colour"
+      ],
+      "status": "demo",
+      "poster": null,
+      "scorecard": {
+        "compute": false,
+        "mobile": "untested",
+        "flash": "none",
+        "lightPage": "no",
+        "features": {
+          "required": []
+        },
+        "fallback": "A still of the rosette.",
+        "useCases": [
+          "The template for new effects; a calm dark hero at a pinch"
+        ]
+      }
+    },
+    {
+      "id": "kaleidoscope",
+      "title": "Kaleidoscope",
+      "summary": "Drifting coloured glass seen through mirrors: two mirrors at an angle (a rosette), or the four mirror shapes that tile the plane (a square, and the 45-45-90, 60-60-60 and 30-60-90 triangles). Every pixel is folded into the mirrors’ fundamental domain and reads the glass there, so the mirrors meet without a seam.",
+      "epic": "4",
+      "tier": "A",
+      "tags": [
+        "symmetry",
+        "kaleidoscope",
+        "colour"
+      ],
+      "status": "demo",
+      "poster": null,
+      "scorecard": {
+        "compute": false,
+        "mobile": "untested",
+        "flash": "low",
+        "lightPage": "no",
+        "features": {
+          "required": []
+        },
+        "fallback": "A still of the kaleidoscope; a conic-gradient wedge repeated by rotation for 6 to 12 wedges.",
+        "useCases": [
+          "A hero or section background on a music, festival or art site",
+          "A loader, small"
+        ]
+      }
+    }
+  ]
+}

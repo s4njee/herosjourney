@@ -1,0 +1,253 @@
+/*
+ * Design tokens and the few primitives every shell component shares.
+ * The effects carry the page: chrome stays quiet, flat, and low-contrast against them.
+ * Components use these tokens only; no new colours, radii, or font sizes elsewhere.
+ *
+ * Dark first: these effects are saturated colour and light on black, and they read best there.
+ * The light theme is real and complete, because a light page is the hard test every overlay
+ * effect has to be shown against. Neutrals lean a little violet.
+ * The accent is the only magenta; tier colours stay away from it.
+ */
+
+:root {
+  color-scheme: dark;
+
+  --hj-font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --hj-font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --hj-text-xs: 0.75rem;
+  --hj-text-s: 0.8125rem;
+  --hj-text-m: 0.9375rem;
+  --hj-text-l: 1.25rem;
+  --hj-text-xl: 1.75rem;
+
+  --hj-space-1: 4px;
+  --hj-space-2: 8px;
+  --hj-space-3: 12px;
+  --hj-space-4: 16px;
+  --hj-space-5: 24px;
+  --hj-space-6: 40px;
+
+  --hj-radius-s: 4px;
+  --hj-radius-m: 8px;
+  --hj-radius-l: 14px;
+
+  --hj-bg: light-dark(#f5f4fa, #07070f);
+  --hj-surface: light-dark(#fdfcff, #0e0e1a);
+  --hj-surface-2: light-dark(#e7e5f2, #171729);
+  --hj-border: light-dark(#d2cfe3, #26263d);
+  --hj-text: light-dark(#12111c, #eceaf7);
+  --hj-text-muted: light-dark(#5a5773, #9d9bb8);
+  --hj-accent: light-dark(#b0168f, #ff4fd8);
+  --hj-on-accent: light-dark(#fdfcff, #1a0716);
+  --hj-focus: light-dark(#b0168f, #ffa8ec);
+
+  /* Practicality tiers: A drop-in, B feature, C showpiece. Hues clear of the magenta accent. */
+  --hj-tier-a: light-dark(#1f7a4d, #6fd6a0);
+  --hj-tier-b: light-dark(#0b6f78, #5fcfd8);
+  --hj-tier-c: light-dark(#8a5300, #f2c46f);
+
+  --hj-header-height: 52px;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='auto'] {
+  color-scheme: light dark;
+}
+
+/*
+ * A subtree can be shown as the other kind of page (the effect stage does this, story 2.7): the
+ * tokens are light-dark() values, so they follow whatever colour scheme the element has.
+ */
+[data-page='light'] {
+  color-scheme: light;
+}
+
+[data-page='dark'] {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--hj-bg);
+  color: var(--hj-text);
+  font: var(--hj-text-m) / 1.5 var(--hj-font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--hj-accent);
+  text-underline-offset: 0.15em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--hj-focus);
+  outline-offset: 2px;
+}
+
+/* Numbers and code: tabular so readouts do not jitter as they update. */
+.hj-data {
+  font-family: var(--hj-font-mono);
+  font-size: var(--hj-text-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.hj-muted {
+  color: var(--hj-text-muted);
+}
+
+.hj-label {
+  color: var(--hj-text-muted);
+  font-size: var(--hj-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hj-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hj-space-2);
+  min-height: 32px;
+  padding: 0 var(--hj-space-3);
+  border: 1px solid var(--hj-border);
+  border-radius: var(--hj-radius-m);
+  background: var(--hj-surface);
+  color: var(--hj-text);
+  font: inherit;
+  font-size: var(--hj-text-s);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.hj-button:hover {
+  background: var(--hj-surface-2);
+}
+
+.hj-button[aria-pressed='true'],
+.hj-button--primary {
+  border-color: var(--hj-accent);
+  background: var(--hj-accent);
+  color: var(--hj-on-accent);
+}
+
+.hj-button--quiet {
+  border-color: transparent;
+  background: transparent;
+}
+
+.hj-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--hj-space-2);
+  border: 1px solid var(--hj-border);
+  border-radius: 999px;
+  color: var(--hj-text-muted);
+  font-size: var(--hj-text-xs);
+  white-space: nowrap;
+}
+
+/* Tier chips: add data-tier="A" | "B" | "C". */
+.hj-chip[data-tier] {
+  border-color: currentColor;
+  font-weight: 600;
+}
+
+.hj-chip[data-tier='A'] {
+  color: var(--hj-tier-a);
+}
+
+.hj-chip[data-tier='B'] {
+  color: var(--hj-tier-b);
+}
+
+.hj-chip[data-tier='C'] {
+  color: var(--hj-tier-c);
+}
+
+.hj-panel {
+  border: 1px solid var(--hj-border);
+  border-radius: var(--hj-radius-l);
+  background: var(--hj-surface);
+}
+
+.hj-tabs {
+  display: flex;
+  gap: var(--hj-space-4);
+  border-bottom: 1px solid var(--hj-border);
+}
+
+.hj-tab {
+  margin-bottom: -1px;
+  padding: var(--hj-space-2) 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--hj-text-muted);
+  font: inherit;
+  font-size: var(--hj-text-s);
+  cursor: pointer;
+}
+
+.hj-tab[aria-selected='true'] {
+  border-bottom-color: var(--hj-accent);
+  color: var(--hj-text);
+}
+
+/* Long-form text: write-ups and notes. */
+.hj-prose {
+  max-width: 68ch;
+  line-height: 1.65;
+}
+
+.hj-prose > * + * {
+  margin-top: var(--hj-space-4);
+}
+
+.hj-prose h2 {
+  margin-top: var(--hj-space-5);
+  font-size: var(--hj-text-l);
+}
+
+.hj-prose h3 {
+  font-size: var(--hj-text-m);
+}
+
+.hj-prose code {
+  padding: 0.1em 0.3em;
+  border-radius: var(--hj-radius-s);
+  background: var(--hj-surface-2);
+  font-family: var(--hj-font-mono);
+  font-size: 0.9em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

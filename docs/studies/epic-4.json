@@ -1,0 +1,334 @@
+{
+  "epic": "4",
+  "measuredAt": "2026-10-28T08:45:55.001Z",
+  "device": "Metal driver on macOS Version 26.6.2 (Build 25G83)",
+  "deviceClass": "unclassified",
+  "adapter": {
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "device": "apple-m1-max",
+    "description": "Metal driver on macOS Version 26.6.2 (Build 25G83)"
+  },
+  "runtime": "Dawn (node webgpu bindings)",
+  "method": {
+    "metric": "GPU timestamps: frame span (first pass start to last pass end) and marginal cost per extra frame",
+    "warmupFrames": 12,
+    "rounds": 11,
+    "repeats": 4
+  },
+  "note": "Only this adapter was measured. spanMs includes the timing floor (see the \"(floor)\" rows); slopeMs is the cost of one more frame of the same work and is the number to compare by. A slope at or below zero means the work is below what this method can resolve.",
+  "rows": [
+    {
+      "effect": "(floor)",
+      "config": "one constant-colour pass",
+      "width": 1920,
+      "height": 1080,
+      "spanMs": 0.065536,
+      "slopeMs": 0.04369066666666666,
+      "slopeMinMs": -0.30583466666666664,
+      "slopeMaxMs": 0.2839893333333333,
+      "passes": 1,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "(tail)",
+      "config": "constant scene + bloom + output",
+      "width": 1920,
+      "height": 1080,
+      "spanMs": 0.589824,
+      "slopeMs": 0.4369066666666666,
+      "slopeMinMs": -0.5679786666666666,
+      "slopeMaxMs": 0.917504,
+      "passes": 11,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "default",
+      "width": 1920,
+      "height": 1080,
+      "spanMs": 0.851968,
+      "slopeMs": 1.2670293333333331,
+      "slopeMinMs": 1.179648,
+      "slopeMaxMs": 1.8131626666666667,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset rosette",
+      "width": 1920,
+      "height": 1080,
+      "spanMs": 0.851968,
+      "slopeMs": 1.2233386666666666,
+      "slopeMinMs": 0.4805973333333333,
+      "slopeMaxMs": 1.9442346666666666,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset square mirrors",
+      "width": 1920,
+      "height": 1080,
+      "spanMs": 0.851968,
+      "slopeMs": 1.1359573333333333,
+      "slopeMinMs": 0.262144,
+      "slopeMaxMs": 1.9223893333333333,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset triangle of 60°",
+      "width": 1920,
+      "height": 1080,
+      "spanMs": 0.786432,
+      "slopeMs": 1.2014933333333333,
+      "slopeMinMs": 1.0267306666666667,
+      "slopeMaxMs": 1.572864,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset thirty-sixty-ninety",
+      "width": 1920,
+      "height": 1080,
+      "spanMs": 0.851968,
+      "slopeMs": 1.2233386666666668,
+      "slopeMinMs": 1.0922666666666665,
+      "slopeMaxMs": 1.703936,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset eight mirrors, slow",
+      "width": 1920,
+      "height": 1080,
+      "spanMs": 0.851968,
+      "slopeMs": 1.0922666666666667,
+      "slopeMinMs": 0.65536,
+      "slopeMaxMs": 1.9879253333333333,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "order=3",
+      "width": 1920,
+      "height": 1080,
+      "params": {
+        "order": 3
+      },
+      "spanMs": 1.441792,
+      "slopeMs": 1.048576,
+      "slopeMinMs": 0.786432,
+      "slopeMaxMs": 1.7913173333333334,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "order=6",
+      "width": 1920,
+      "height": 1080,
+      "params": {
+        "order": 6
+      },
+      "spanMs": 0.851968,
+      "slopeMs": 1.179648,
+      "slopeMinMs": 0.8738133333333332,
+      "slopeMaxMs": 1.7257813333333332,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "order=12",
+      "width": 1920,
+      "height": 1080,
+      "params": {
+        "order": 12
+      },
+      "spanMs": 1.114112,
+      "slopeMs": 1.1578026666666665,
+      "slopeMinMs": 0.41506133333333334,
+      "slopeMaxMs": 1.572864,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "order=24",
+      "width": 1920,
+      "height": 1080,
+      "params": {
+        "order": 24
+      },
+      "spanMs": 0.851968,
+      "slopeMs": 1.2670293333333331,
+      "slopeMinMs": 0.4369066666666665,
+      "slopeMaxMs": 1.6602453333333334,
+      "passes": 12,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "(floor)",
+      "config": "one constant-colour pass",
+      "width": 960,
+      "height": 540,
+      "spanMs": 0.065536,
+      "slopeMs": 0.065536,
+      "slopeMinMs": -0.30583466666666664,
+      "slopeMaxMs": 0.15291733333333332,
+      "passes": 1,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "(tail)",
+      "config": "constant scene + bloom + output",
+      "width": 960,
+      "height": 540,
+      "spanMs": 0.393216,
+      "slopeMs": 0.3713706666666667,
+      "slopeMinMs": -0.65536,
+      "slopeMaxMs": 0.6335146666666666,
+      "passes": 9,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "default",
+      "width": 960,
+      "height": 540,
+      "spanMs": 0.786432,
+      "slopeMs": 0.6990506666666666,
+      "slopeMinMs": 0.28398933333333337,
+      "slopeMaxMs": 0.9393493333333334,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset rosette",
+      "width": 960,
+      "height": 540,
+      "spanMs": 0.98304,
+      "slopeMs": 0.65536,
+      "slopeMinMs": 0.458752,
+      "slopeMaxMs": 1.0922666666666665,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset square mirrors",
+      "width": 960,
+      "height": 540,
+      "spanMs": 0.720896,
+      "slopeMs": 0.9175040000000001,
+      "slopeMinMs": 0.7208960000000001,
+      "slopeMaxMs": 1.6165546666666666,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset triangle of 60°",
+      "width": 960,
+      "height": 540,
+      "spanMs": 0.98304,
+      "slopeMs": 0.6335146666666667,
+      "slopeMinMs": 0.10922666666666665,
+      "slopeMaxMs": 0.917504,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset thirty-sixty-ninety",
+      "width": 960,
+      "height": 540,
+      "spanMs": 1.245184,
+      "slopeMs": 0.7645866666666666,
+      "slopeMinMs": 0.19660800000000003,
+      "slopeMaxMs": 1.0048853333333334,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "preset eight mirrors, slow",
+      "width": 960,
+      "height": 540,
+      "spanMs": 1.179648,
+      "slopeMs": 0.5461333333333334,
+      "slopeMinMs": 0.24029866666666674,
+      "slopeMaxMs": 1.3981013333333332,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "order=3",
+      "width": 960,
+      "height": 540,
+      "params": {
+        "order": 3
+      },
+      "spanMs": 1.31072,
+      "slopeMs": 0.6772053333333332,
+      "slopeMinMs": 0.24029866666666666,
+      "slopeMaxMs": 0.98304,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "order=6",
+      "width": 960,
+      "height": 540,
+      "params": {
+        "order": 6
+      },
+      "spanMs": 1.703936,
+      "slopeMs": 0.6335146666666667,
+      "slopeMinMs": -0.021845333333333272,
+      "slopeMaxMs": 0.9611946666666666,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "order=12",
+      "width": 960,
+      "height": 540,
+      "params": {
+        "order": 12
+      },
+      "spanMs": 1.441792,
+      "slopeMs": 0.6990506666666668,
+      "slopeMinMs": 0.13107200000000008,
+      "slopeMaxMs": 1.179648,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    },
+    {
+      "effect": "kaleidoscope",
+      "config": "order=24",
+      "width": 960,
+      "height": 540,
+      "params": {
+        "order": 24
+      },
+      "spanMs": 0.917504,
+      "slopeMs": 0.7208960000000001,
+      "slopeMinMs": 0.3058346666666667,
+      "slopeMaxMs": 0.98304,
+      "passes": 10,
+      "metric": "gpu-timestamp"
+    }
+  ]
+}

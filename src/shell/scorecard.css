@@ -1,0 +1,133 @@
+.hj-scorecard {
+  container-type: inline-size;
+}
+
+.hj-scorecard__grid {
+  display: grid;
+  gap: var(--hj-space-4);
+}
+
+.hj-scorecard__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hj-space-3);
+  min-width: 0;
+  padding: var(--hj-space-4);
+}
+
+.hj-scorecard__live {
+  border-style: dashed;
+}
+
+.hj-scorecard__live[hidden] {
+  display: none;
+}
+
+.hj-scorecard__list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.hj-scorecard__row {
+  display: grid;
+  gap: var(--hj-space-1);
+  padding: var(--hj-space-3) 0;
+  border-top: 1px solid var(--hj-border);
+}
+
+.hj-scorecard__row:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.hj-scorecard__value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--hj-space-1);
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.hj-scorecard__budget {
+  color: var(--hj-text-muted);
+}
+
+.hj-scorecard__features,
+.hj-scorecard__uses {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hj-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hj-scorecard__uses li::before {
+  content: '– ';
+  color: var(--hj-text-muted);
+}
+
+.hj-scorecard__features [data-state='missing'] > span {
+  color: var(--hj-tier-c);
+}
+
+.hj-scorecard__features [data-state='available'] > span {
+  color: var(--hj-tier-a);
+}
+
+.hj-scorecard__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--hj-text-s);
+}
+
+.hj-scorecard__table caption {
+  padding-bottom: var(--hj-space-2);
+  font-size: var(--hj-text-xs);
+  text-align: left;
+}
+
+.hj-scorecard__table th,
+.hj-scorecard__table td {
+  padding: var(--hj-space-1) var(--hj-space-3) var(--hj-space-1) 0;
+  border-bottom: 1px solid var(--hj-border);
+  text-align: left;
+  font-weight: normal;
+}
+
+.hj-scorecard__table td:nth-child(2) {
+  white-space: nowrap;
+}
+
+.hj-scorecard__table thead th {
+  color: var(--hj-text-muted);
+  font-size: var(--hj-text-xs);
+}
+
+.hj-scorecard__note {
+  font-size: var(--hj-text-xs);
+}
+
+@container (min-width: 640px) {
+  .hj-scorecard__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .hj-scorecard__live {
+    grid-column: 1 / -1;
+  }
+
+  .hj-scorecard__live .hj-scorecard__list {
+    flex-direction: row;
+    gap: var(--hj-space-5);
+  }
+
+  .hj-scorecard__live .hj-scorecard__row {
+    padding: 0;
+    border-top: 0;
+  }
+}

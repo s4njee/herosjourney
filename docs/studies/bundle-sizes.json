@@ -1,0 +1,49 @@
+{
+  "eager": {
+    "chunks": 6,
+    "raw": 13886,
+    "gzip": 6659
+  },
+  "effects": {
+    "hello": {
+      "chunks": 11,
+      "ownGzip": 900,
+      "gzip": 23878,
+      "raw": 62111,
+      "files": [
+        "assets/dose-B1KDDn0M.js",
+        "assets/fold-D_Cr0L2c.js",
+        "assets/fullscreen-BDXEFvdz.js",
+        "assets/hash-bWx0F85T.js",
+        "assets/hello-7RilalNz.js",
+        "assets/oklab-DA07OUH3.js",
+        "assets/profiler-Bi27xYp-.js",
+        "assets/rosette-BGSonPk-.js",
+        "assets/shader-xzRCRHTt.js",
+        "assets/simplex-BHRnIhah.js",
+        "assets/types-ci2WwWg0.js"
+      ],
+      "gzipKb": 23.3
+    },
+    "kaleidoscope": {
+      "chunks": 11,
+      "ownGzip": 3666,
+      "gzip": 25735,
+      "raw": 65367,
+      "files": [
+        "assets/dose-B1KDDn0M.js",
+        "assets/fold-D_Cr0L2c.js",
+        "assets/fullscreen-BDXEFvdz.js",
+        "assets/glass-Lffeepha.js",
+        "assets/hash-bWx0F85T.js",
+        "assets/kaleidoscope-BKfFpLRw.js",
+        "assets/mirror-Bz_LhH77.js",
+        "assets/profiler-Bi27xYp-.js",
+        "assets/shader-xzRCRHTt.js",
+        "assets/simplex-BHRnIhah.js",
+        "assets/types-ci2WwWg0.js"
+      ],
+      "gzipKb": 25.1
+    }
+  }
+}

@@ -1,0 +1,107 @@
+.hj-source {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hj-space-3);
+  min-width: 0;
+}
+
+.hj-source__bar,
+.hj-source__group,
+.hj-source__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hj-space-2);
+}
+
+.hj-source__related {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hj-space-2);
+}
+
+.hj-source__related[hidden] {
+  display: none;
+}
+
+.hj-source__bar {
+  justify-content: space-between;
+  gap: var(--hj-space-3);
+}
+
+.hj-source__caption {
+  justify-content: space-between;
+  min-height: 20px;
+}
+
+.hj-source__caption > p {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.hj-source__status {
+  color: var(--hj-text-muted);
+  font-size: var(--hj-text-xs);
+}
+
+.hj-source__status[data-state='error'] {
+  color: var(--hj-tier-c);
+}
+
+.hj-source__button {
+  /* Rows of file names stay compact on narrow screens. */
+  min-height: 28px;
+  padding: 0 var(--hj-space-3);
+}
+
+/* Code block: shared by the source viewer and fenced blocks in the notes. */
+pre.hj-source__code {
+  margin: 0;
+  padding: var(--hj-space-3) 0;
+  overflow-x: auto;
+  border: 1px solid var(--hj-border);
+  border-radius: var(--hj-radius-m);
+  background: var(--hj-surface);
+  color: var(--hj-text);
+  font-family: var(--hj-font-mono);
+  font-size: var(--hj-text-s);
+  line-height: 1.6;
+  tab-size: 2;
+  counter-reset: hj-line;
+}
+
+pre.hj-source__code code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  padding: 0;
+  background: none;
+  font: inherit;
+}
+
+.hj-source__line {
+  display: block;
+  padding-right: var(--hj-space-4);
+  white-space: pre;
+  counter-increment: hj-line;
+}
+
+/* The gutter stays put while long lines scroll underneath it. */
+.hj-source__line::before {
+  content: counter(hj-line);
+  display: inline-block;
+  position: sticky;
+  left: 0;
+  min-width: calc(var(--hj-source-digits, 3) * 1ch + var(--hj-space-3) + var(--hj-space-2));
+  margin-right: var(--hj-space-3);
+  padding-left: var(--hj-space-3);
+  padding-right: var(--hj-space-2);
+  background: var(--hj-surface);
+  color: var(--hj-text-muted);
+  text-align: right;
+  user-select: none;
+}
+
+.hj-source__line > span {
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
+}
