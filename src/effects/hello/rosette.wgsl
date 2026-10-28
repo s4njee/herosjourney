@@ -1,6 +1,7 @@
 #include "fullscreen.wgsl"
 #include "fold.wgsl"
 #include "oklab.wgsl"
+#include "colour-caps.wgsl"
 #include "simplex.wgsl"
 #include "params.wgsl"
 
@@ -28,8 +29,9 @@
   let field = clamp(0.5 + 0.35 * n1 + 0.15 * n2, 0.0, 1.0);
 
   // Lightness from the field, hue from the field and the clock, chroma from the dose.
-  let L = mix(0.18, 0.72, field) * (1.0 - smoothstep(0.9, 1.9, r) * 0.7);
+  let L = mix(params.dark, params.light, field) * (1.0 - smoothstep(0.9, 1.9, r) * 0.7);
   let h = params.hue + 1.2 * n1 + params.time * params.hue_speed;
-  let lch = gamut_map_oklch(vec3f(L, params.chroma, h), 1.0);
+  // Gamut-mapped and red-capped: the hue drifts, and passes red (story 2.3).
+  let lch = safe_colour(vec3f(L, params.chroma, h), 1.0);
   return vec4f(oklch_to_linear(lch), 1.0);
 }

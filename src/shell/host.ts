@@ -28,7 +28,7 @@ export interface EffectHost {
   onLoad(listener: (loaded: LoadedEffect) => void): () => void;
   onStats(listener: (stats: FrameStats) => void): () => void;
   requestTiming(): () => void;
-  pause(): void;
+  pause(options?: { ease?: boolean }): void;
   resume(): void;
   setResolutionScale(scale: number): void;
   destroy(): void;
@@ -73,7 +73,7 @@ export function mountEffect(
     onLoad: (listener) => core.onLoad(listener),
     onStats: (listener) => core.onStats(listener),
     requestTiming: () => core.requestTiming(),
-    pause: () => core.pause(),
+    pause: (options) => core.pause(options),
     resume: () => core.resume(),
     setResolutionScale: (scale) => core.setResolutionScale(scale),
     destroy() {

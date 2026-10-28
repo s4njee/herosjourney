@@ -13,11 +13,18 @@
         "colour"
       ],
       "status": "demo",
-      "poster": null,
+      "poster": "src/effects/hello/poster.webp",
       "scorecard": {
         "compute": false,
         "mobile": "untested",
         "flash": "none",
+        "pattern": "none",
+        "patternPresets": [
+          "full contrast"
+        ],
+        "motionPresets": [
+          "full contrast"
+        ],
         "lightPage": "no",
         "features": {
           "required": []
@@ -25,6 +32,70 @@
         "fallback": "A still of the rosette.",
         "useCases": [
           "The template for new effects; a calm dark hero at a pinch"
+        ]
+      }
+    },
+    {
+      "id": "chroma-bloom",
+      "title": "Chroma bloom",
+      "summary": "Colour enhancement, the first and gentlest visual: a muted landscape whose colour rises and whose hues drift slowly apart, region by region, while every pixel keeps its lightness exactly. Nothing gets brighter or darker, so nothing flashes. Beside it, what CSS saturate() and hue-rotate() do to the same scene.",
+      "epic": "3",
+      "tier": "B",
+      "tags": [
+        "colour",
+        "OKLCH",
+        "wide gamut"
+      ],
+      "status": "demo",
+      "poster": "src/effects/chroma-bloom/poster.webp",
+      "scorecard": {
+        "compute": false,
+        "mobile": "untested",
+        "flash": "none",
+        "pattern": "none",
+        "lightPage": "no",
+        "features": {
+          "required": []
+        },
+        "fallback": "A still; or the page’s own image with CSS saturate(), which changes lightness.",
+        "useCases": [
+          "A hero image that blooms into colour",
+          "A gentle background behind text"
+        ]
+      }
+    },
+    {
+      "id": "hue-cycle",
+      "title": "Hue cycle",
+      "summary": "Palette cycling, the cheapest moving psychedelic image there is: rings, a rosette or a Truchet tiling, coloured by a palette that slides through them, so colour flows while nothing moves. The palette is OKLCH stops you can edit, and its contrast and speed are held under the pattern and flash limits whatever it is.",
+      "epic": "3",
+      "tier": "A",
+      "tags": [
+        "colour",
+        "palette",
+        "OKLCH"
+      ],
+      "status": "demo",
+      "poster": "src/effects/hue-cycle/poster.webp",
+      "scorecard": {
+        "compute": false,
+        "mobile": "untested",
+        "flash": "none",
+        "pattern": "none",
+        "patternPresets": [
+          "full contrast"
+        ],
+        "motionPresets": [
+          "full contrast"
+        ],
+        "lightPage": "no",
+        "features": {
+          "required": []
+        },
+        "fallback": "A still; or a repeating-radial-gradient with an animated custom property.",
+        "useCases": [
+          "A loader or a small badge",
+          "A section background on a music or festival site"
         ]
       }
     },
@@ -40,11 +111,18 @@
         "colour"
       ],
       "status": "demo",
-      "poster": null,
+      "poster": "src/effects/kaleidoscope/poster.webp",
       "scorecard": {
         "compute": false,
         "mobile": "untested",
         "flash": "low",
+        "pattern": "none",
+        "patternPresets": [
+          "bright glass"
+        ],
+        "motionPresets": [
+          "bright glass"
+        ],
         "lightPage": "no",
         "features": {
           "required": []

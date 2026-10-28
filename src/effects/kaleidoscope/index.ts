@@ -1,8 +1,10 @@
-import { gamutMap, oklchToLinear } from '../../gpu/colour/oklab.ts';
+import { lightnessForLuminance, luminance, oklchToLinear } from '../../gpu/colour/oklab.ts';
 import { createFullscreenPipeline, renderFullscreen } from '../../gpu/fullscreen.ts';
 import { generateMipmaps, mipLevelCount } from '../../gpu/mipmap.ts';
 import { createHdrTail, TAIL_PARAMS } from '../../gpu/post/index.ts';
-import { DOSE_PARAMS, dosed } from '../../gpu/safety/dose.ts';
+import { safeColour } from '../../gpu/safety/colour-caps.ts';
+import { DOSE_PARAMS, dosed, heldDose } from '../../gpu/safety/dose.ts';
+import { patternStepAt } from '../../gpu/safety/pattern.ts';
 import { withChunks } from '../../gpu/shader.ts';
 import { SYMMETRY_GROUPS, type SymmetryGroup } from '../../gpu/symmetry/fold.ts';
 import { createUniformBuffer, defineUniformStruct, uniformArray } from '../../gpu/uniforms.ts';
@@ -24,6 +26,11 @@ import mirrorShader from './mirror.wgsl';
  * fundamental domain (fold.ts) and `span` scales the domain onto the glass, so each arrangement
  * looks at about the same share of it; `cells` evens out the tile sizes on screen.
  */
+/** OKLab lightness of the ground the glass lies on. */
+const GROUND_L = 0.28;
+
+const NO_TONEMAP = { output: { tonemap: 'none' } } as const;
+
 const MIRRORS = {
   rosette: { group: 'dn', centre: [0.5, 0.14], span: 0.75, cells: 2 },
   square: { group: 'pmm', centre: [0.25, 0.25], span: 1.3, cells: 1 },
@@ -87,6 +94,7 @@ export const effect = defineEffect({
     'triangle of 60°': { mirrors: '60-60-60', scale: 2.5, hue: 3.6 },
     'thirty-sixty-ninety': { mirrors: '30-60-90', scale: 2, hue: 0.9 },
     'eight mirrors, slow': { order: 8, dose: 0.2 },
+    'bright glass': { dose: 0.9 },
   },
 
   async create({ device, format, hdr, params, profiler }) {
@@ -149,10 +157,19 @@ export const effect = defineEffect({
       frame(time, encoder, target) {
         const dt = time.delta * params.speed;
         clock += dt;
-        spin += dt * dosed(params.dose, 0, 0.04, 0.15);
+        spin += dt * dosed(params.dose, 0, 0.04, 0.12);
         const drift = dosed(params.dose, 0, 0.025, 0.08);
-        const chroma = dosed(params.dose, 0.02, 0.11, 0.2);
+        // A held frame is drawn at no more than the default dose (story 2.6).
+        const look = time.still ? heldDose(params.dose) : params.dose;
+        const chroma = dosed(look, 0.02, 0.11, 0.2);
         const hueSpeed = dosed(params.dose, 0, 0.03, 0.12);
+        // A rosette is a regular radial pattern by construction, so below the strong dose the
+        // glass stays within a luminance step of the ground at which its repeats are not
+        // clearly discernible stripes (story 2.2). The glass shader brightens shards by up to
+        // 1.3 times; the output is not tonemapped, so this is the step on screen, over exposure.
+        const ground = oklchToLinear(safeColour([GROUND_L, chroma * 0.4, params.hue + 0.6]));
+        const groundY = luminance(ground);
+        const step = patternStepAt(look) / 1.3 / Math.max(params.exposure, 1e-3);
 
         for (let i = 0; i < BEADS + SHARDS; i++) {
           const shard = i >= BEADS;
@@ -166,13 +183,12 @@ export const effect = defineEffect({
             ],
             i * 4,
           );
-          const L = 0.55 + 0.25 * hash(i, 6);
-          const c = gamutMap(
-            oklchToLinear([L, chroma, params.hue + i * GOLDEN + clock * hueSpeed]),
-          );
+          const h = params.hue + i * GOLDEN + clock * hueSpeed;
+          const L = lightnessForLuminance(groundY + step * (0.55 + 0.45 * hash(i, 6)), chroma, h);
+          // Red-capped as well as gamut-mapped: each bead's hue turns, and passes red (story 2.3).
+          const c = oklchToLinear(safeColour([L, chroma, h]));
           colors.set([c[0], c[1], c[2], 1], i * 4);
         }
-        const ground = gamutMap(oklchToLinear([0.16, chroma * 0.4, params.hue + 0.6]));
         scene.set({
           ground: [ground[0], ground[1], ground[2], 1],
           time: clock,
@@ -189,7 +205,7 @@ export const effect = defineEffect({
 
         const arrangement = MIRRORS[params.mirrors as MirrorName] ?? MIRRORS.rosette;
         const rosette = arrangement.group === 'dn';
-        const wander = dosed(params.dose, 0, 0.12, 0.3);
+        const wander = dosed(look, 0, 0.12, 0.3);
         uniforms.set({
           pan: [0.5 + wander * Math.sin(clock * 0.05), 0.5 + wander * Math.cos(clock * 0.037)],
           aspect,
@@ -204,7 +220,8 @@ export const effect = defineEffect({
         renderFullscreen(encoder, tail.scene.view, mirror, [mirrorGroup], {
           timestampWrites: profiler.pass('mirrors'),
         });
-        tail.encode(encoder, target, time, params, profiler);
+        // Display colour already, and the step above is set on screen: no tonemap curve.
+        tail.encode(encoder, target, time, params, profiler, NO_TONEMAP);
       },
       destroy() {
         uniforms.destroy();

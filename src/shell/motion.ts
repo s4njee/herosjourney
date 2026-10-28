@@ -84,10 +84,17 @@ export function motionAllowed(systemReduced: boolean): boolean {
   return choice === 'auto' ? !systemReduced : choice === 'play';
 }
 
+/**
+ * Why a host may not animate: the page is hidden, the element is out of view, the system asks
+ * for reduced motion, or the visitor chose to pause. Only the last is a halt someone is watching
+ * that they did not ask to be sudden, so it is the one a host eases into (story 2.4).
+ */
+export type MotionStop = 'hidden' | 'offscreen' | 'reduced' | 'choice';
+
 /** Observe whether a host should animate. A first static frame is still drawn by the host. */
 export function observeMotionEligibility(
   element: HTMLElement,
-  changed: (eligible: boolean) => void,
+  changed: (eligible: boolean, why: MotionStop | undefined) => void,
 ): () => void {
   const doc = element.ownerDocument;
   const owner = doc.defaultView;
@@ -95,10 +102,20 @@ export function observeMotionEligibility(
   let inView = true;
   let previous: boolean | undefined;
   const update = () => {
-    const eligible = !doc.hidden && inView && motionAllowed(reduced?.matches ?? false);
+    const systemReduced = reduced?.matches ?? false;
+    const why: MotionStop | undefined = doc.hidden
+      ? 'hidden'
+      : !inView
+        ? 'offscreen'
+        : motionAllowed(systemReduced)
+          ? undefined
+          : choice === 'pause'
+            ? 'choice'
+            : 'reduced';
+    const eligible = why === undefined;
     if (eligible !== previous) {
       previous = eligible;
-      changed(eligible);
+      changed(eligible, why);
     }
   };
   const observer = owner?.IntersectionObserver

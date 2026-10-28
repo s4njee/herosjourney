@@ -40,3 +40,10 @@ export {
   type HdrTailOptions,
   type TailValues,
 } from './tail.ts';
+export {
+  BLEED_RADIUS,
+  COLOUR_PARAMS,
+  createColourStage,
+  type ColourStage,
+  type ColourStageValues,
+} from './colour-stage.ts';

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { listEffects, loadEffect } from '../src/effects/registry.ts';
+import { STRONG_DOSE } from '../src/gpu/safety/dose.ts';
 import {
   analyseFlashes,
   findTransitions,
@@ -131,6 +132,11 @@ describe.skipIf(process.env.FLASH_SWEEP === '0')('registered effects against WCA
         ORDER[report.verdict],
         `${id} measured "${report.verdict}": ${JSON.stringify(report)}`,
       ).toBeLessThanOrEqual(ORDER[claimed]);
+      // A visitor can drag the slider to the strong end unwarned, so that must pass too.
+      const strong = await measureFlashes(id, { params: { dose: STRONG_DOSE }, seconds: 3 });
+      expect(strong.verdict, `${id} at dose ${STRONG_DOSE}: ${JSON.stringify(strong)}`).not.toBe(
+        'high',
+      );
     },
   );
 });

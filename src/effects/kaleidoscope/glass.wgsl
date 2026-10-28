@@ -5,7 +5,7 @@
 // The object cell: what the mirrors look at. Soft coloured glass drifting over a dark ground,
 // each piece a disc with a brighter rim, plus thin curved shards so there is fine detail for the
 // mip levels to filter. Drawn into a square texture every frame; colours come from the CPU,
-// already gamut-mapped in OKLCH (oklab.ts), so the shader only places them.
+// already gamut-mapped and red-capped in OKLCH (colour-caps.ts), so the shader only places them.
 
 @group(0) @binding(0) var<uniform> scene: SceneParams;
 

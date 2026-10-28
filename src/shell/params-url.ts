@@ -1,4 +1,5 @@
 import { defaultParams, type ParamDef, type ParamSchema } from '../effects/types.ts';
+import { formatPalette, parsePalette } from '../gpu/colour/palette.ts';
 
 // Effect parameters in the query string: `p.<key>=<value>`, written only where a value differs
 // from the schema default so links stay short. Pure, so it can be tested without a DOM.
@@ -8,6 +9,7 @@ import { defaultParams, type ParamDef, type ParamSchema } from '../effects/types
 //   boolean  p.flag=1 | 0       `true` / `false` also accepted when reading
 //   select   p.mode=choppy      must be one of the options
 //   colour   p.tint=0d4a66      sRGB hex without `#`; the stored value is linear RGB
+//   palette  p.palette=0.42 0.14 300,0.6 0.18 345   OKLCH stops (`formatPalette`), normalised
 
 export const PARAM_PREFIX = 'p.';
 export const PRESET_KEY = 'preset';
@@ -80,6 +82,10 @@ function normalize(def: ParamDef, raw: unknown): unknown {
         : undefined;
     case 'select':
       return typeof raw === 'string' && def.options.includes(raw) ? raw : undefined;
+    case 'palette': {
+      const stops = typeof raw === 'string' ? parsePalette(raw) : undefined;
+      return stops ? formatPalette(stops) : undefined;
+    }
   }
 }
 
@@ -96,6 +102,7 @@ function parse(def: ParamDef, text: string): unknown {
     case 'color':
       return hexToColor(text);
     case 'select':
+    case 'palette':
       return normalize(def, text);
   }
 }
@@ -112,6 +119,7 @@ function format(def: ParamDef, value: unknown): string | undefined {
     case 'color':
       return colorToHex(fitted as number[]);
     case 'select':
+    case 'palette':
       return fitted as string;
   }
 }

@@ -1,6 +1,7 @@
 import { createFullscreenPipeline, renderFullscreen } from '../../gpu/fullscreen.ts';
 import { createHdrTail, TAIL_PARAMS } from '../../gpu/post/index.ts';
-import { DOSE_PARAMS, dosed } from '../../gpu/safety/dose.ts';
+import { DOSE_PARAMS, dosed, heldDose } from '../../gpu/safety/dose.ts';
+import { patternStepAt } from '../../gpu/safety/pattern.ts';
 import { withChunks } from '../../gpu/shader.ts';
 import { createUniformBuffer, defineUniformStruct } from '../../gpu/uniforms.ts';
 import { defineEffect } from '../types.ts';
@@ -13,9 +14,16 @@ const Params = defineUniformStruct('Params', {
   spin: 'f32',
   order: 'f32',
   chroma: 'f32',
+  dark: 'f32',
+  light: 'f32',
   hue: 'f32',
   hue_speed: 'f32',
 });
+
+/** OKLab lightness of the rosette's darkest noise. */
+const DARK_L = 0.18;
+
+const NO_TONEMAP = { output: { tonemap: 'none' } } as const;
 
 export const effect = defineEffect({
   meta,
@@ -31,6 +39,7 @@ export const effect = defineEffect({
     calm: {},
     'nearly still': { dose: 0.1 },
     eight: { order: 8, hue: 2.4 },
+    'full contrast': { dose: 0.9 },
   },
 
   async create({ device, format, hdr, params, profiler }) {
@@ -59,12 +68,22 @@ export const effect = defineEffect({
         clock += dt;
         // Radians a second: a full turn takes about three and a half minutes at the default.
         spin += dt * dosed(params.dose, 0, 0.03, 0.12);
+        // A held frame is drawn at no more than the default dose (story 2.6).
+        const look = time.still ? heldDose(params.dose) : params.dose;
         uniforms.set({
           aspect,
           time: clock,
           spin,
           order: params.order,
-          chroma: dosed(params.dose, 0.01, 0.07, 0.16),
+          chroma: dosed(look, 0.01, 0.07, 0.16),
+          // A rosette repeats exactly `order` times a turn, so it is a regular radial pattern by
+          // construction: the noise's lightness range is held to a luminance step at which the
+          // repeats are not clearly discernible stripes (story 2.2), with a margin for chroma.
+          // Untonemapped (below), so this is the step on screen, over exposure.
+          dark: DARK_L,
+          light: Math.cbrt(
+            DARK_L ** 3 + (0.85 * patternStepAt(look)) / Math.max(params.exposure, 1e-3),
+          ),
           hue: params.hue,
           hue_speed: dosed(params.dose, 0, 0.04, 0.15),
         });
@@ -72,7 +91,7 @@ export const effect = defineEffect({
         renderFullscreen(encoder, tail.scene.view, pipeline, [bindGroup], {
           timestampWrites: profiler.pass('rosette'),
         });
-        tail.encode(encoder, target, time, params, profiler);
+        tail.encode(encoder, target, time, params, profiler, NO_TONEMAP);
       },
       destroy() {
         uniforms.destroy();

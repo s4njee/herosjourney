@@ -14,6 +14,9 @@ import {
 } from './params-url.ts';
 import { onQueryChange, readQuery, updateQuery } from './router.ts';
 import type { Unmount } from './types.ts';
+import { gateReasons } from '../gpu/safety/gate.ts';
+import { closeGate, gateAccepted, showGate } from './gate.ts';
+import { mountPaletteEditor, type PaletteEditor } from './palette-editor.ts';
 import './controls.css';
 
 /** Trailing delay for URL writes while a slider moves: browsers rate-limit history calls. */
@@ -79,6 +82,8 @@ interface Session {
   view: Values;
   /** Slider tracks, which Tweakpane leaves without a role or value for assistive technology. */
   sliders: Map<string, HTMLElement>;
+  /** Palette parameters, edited outside Tweakpane (story 3.2). */
+  palettes: Map<string, PaletteEditor>;
 }
 
 export function mountControls(container: HTMLElement, host: EffectHost): Unmount {
@@ -157,6 +162,7 @@ export function mountControls(container: HTMLElement, host: EffectHost): Unmount
     }
     syncing = true;
     pane?.refresh();
+    for (const [key, editor] of session.palettes) editor.refresh(String(params[key]));
     syncing = false;
     syncAria();
     syncPresetUi();
@@ -200,7 +206,28 @@ export function mountControls(container: HTMLElement, host: EffectHost): Unmount
     // Presets measured over the WCAG flash threshold are labelled, so choosing one is informed.
     const flashing = new Set(current.effect.meta.scorecard?.flashPresets ?? []);
     const apply = (name: string) => {
-      setValues(presetValues(current.schema, current.presets[name]!));
+      const values = presetValues(current.schema, current.presets[name]!);
+      const meta = current.effect.meta;
+      const reasons = gateReasons(meta, name, values);
+      // Story 2.6: a strong preset stops at once and waits behind the notice. A calm one chosen
+      // while the notice is up closes it and plays.
+      if (reasons.length > 0 && !gateAccepted(meta.id, name)) {
+        host.pause({ ease: false });
+        showGate(host.element, {
+          id: meta.id,
+          preset: name,
+          reasons,
+          onStart: () => host.resume(),
+          onCalm: () => {
+            setValues(presetValues(current.schema, {}));
+            writeNow();
+            host.resume();
+          },
+        });
+      } else if (closeGate(host.element)) {
+        host.resume();
+      }
+      setValues(values);
       writeNow();
     };
 
@@ -254,6 +281,7 @@ export function mountControls(container: HTMLElement, host: EffectHost): Unmount
       pane: undefined,
       view: {},
       sliders: new Map(),
+      palettes: new Map(),
     };
     session = current;
 
@@ -274,6 +302,14 @@ export function mountControls(container: HTMLElement, host: EffectHost): Unmount
       refreshPane();
       for (const [key, def] of entries) {
         const label = def.label ?? humanize(key);
+        if (def.type === 'palette') {
+          const editor = mountPaletteEditor(label, String(params[key]), (text) =>
+            edited(key, def, text),
+          );
+          current.palettes.set(key, editor);
+          paneHost.append(editor.element);
+          continue;
+        }
         const binding =
           def.type === 'number'
             ? pane.addBinding(current.view, key, {
@@ -318,6 +354,7 @@ export function mountControls(container: HTMLElement, host: EffectHost): Unmount
     if (!session) return;
     setValues(presetValues(session.schema, {}));
     writeNow();
+    if (closeGate(host.element)) host.resume();
     announce('Parameters reset to defaults');
   });
 
@@ -371,6 +408,7 @@ export function mountControls(container: HTMLElement, host: EffectHost): Unmount
     removeEventListener('pagehide', flush);
     stopLoad();
     stopQuery();
+    closeGate(host.element);
     session?.pane?.dispose();
     root.remove();
   };

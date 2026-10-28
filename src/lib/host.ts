@@ -19,12 +19,21 @@ import {
   observeCanvasSize,
   type CanvasSizer,
 } from '../gpu/canvas.ts';
+import { configureCanvasWide } from '../gpu/colour/wide-gamut.ts';
 import type { GpuSession } from '../gpu/device.ts';
 import { showFallback } from '../gpu/fallback.ts';
 import { createFrameLoop } from '../gpu/loop.ts';
 import { createGpuProfiler, type GpuProfiler, type PassTiming } from '../gpu/profiler.ts';
 import { trackTextureMemory } from '../gpu/texture-memory.ts';
 import { getIntensity, observeMotionEligibility, onMotionChange } from '../shell/motion.ts';
+
+/**
+ * Seconds a stop the visitor asked for takes to ease to a halt (story 2.4). A spiral or tunnel
+ * that halts at once leaves the still page appearing to move the other way (the motion
+ * aftereffect); slowing over a second or more softens it. Reduced motion and leaving the view
+ * stop at once.
+ */
+export const EASE_OUT_SECONDS = 1.2;
 
 /** Loads (or returns) the effect module. Called again on `reload()`, so it may be a live import. */
 export type EffectLoader = () => Promise<EffectModule>;
@@ -46,6 +55,8 @@ export interface EffectHostOptions {
   resolutionScale?: number;
   /** Let an effect that asks for an HDR canvas have one. Off by default. */
   allowHdr?: boolean;
+  /** Let an effect that asks for a display-p3 canvas have one (story 3.3). Off by default. */
+  allowWideGamut?: boolean;
   /** How fast the effect's time runs: 0.25 plays everything at a quarter speed. Default 1. */
   timeScale?: number;
 }
@@ -77,7 +88,11 @@ export interface EffectHost {
   onLoad(listener: (loaded: LoadedEffect) => void): () => void;
   onStats(listener: (stats: FrameStats) => void): () => void;
   requestTiming(): () => void;
-  pause(): void;
+  /**
+   * Stops and holds a frame. A running effect eases to a halt over `EASE_OUT_SECONDS` unless
+   * `ease` is false (the start gate stops before a strong setting is seen).
+   */
+  pause(options?: { ease?: boolean }): void;
   resume(): void;
   setResolutionScale(scale: number): void;
   /** Rebuild the effect, e.g. after its code changed during development. */
@@ -129,6 +144,11 @@ export function createEffectHost(
   const timeScale = options.timeScale ?? 1;
   let paused = options.paused ?? false;
   let suspended = false;
+  // The effect's own clock, so easing can slow it without a jump.
+  let clock = 0;
+  // Loop time at which an eased stop began, while one is under way, and the loop's latest time.
+  let easingFrom: number | undefined;
+  let loopTime = 0;
   let timingRequests = 0;
   let generation = 0;
   let destroyed = false;
@@ -137,23 +157,29 @@ export function createEffectHost(
     if (!mounted) return;
     const { device, context, instance, sizer, profiler } = mounted;
     const started = performance.now();
+    loopTime = time.time;
     sizer.apply();
     profiler.beginFrame();
     const encoder = device.createCommandEncoder({ label: `${label} frame` });
+    let rate = 1;
+    if (easingFrom !== undefined) {
+      const t = Math.min(1, (time.time - easingFrom) / EASE_OUT_SECONDS);
+      rate = 1 - t * t * (3 - 2 * t);
+      if (t >= 1) easingFrom = undefined;
+    }
+    const easing = easingFrom !== undefined;
+    const delta = time.delta * timeScale * rate;
+    clock += delta;
+    const still = (paused || suspended) && !easing;
     instance.frame(
-      {
-        ...time,
-        time: time.time * timeScale,
-        delta: time.delta * timeScale,
-        still: paused || suspended,
-      },
+      { ...time, time: clock, delta, still },
       encoder,
       context.getCurrentTexture().createView(),
     );
     profiler.endFrame(encoder);
     device.queue.submit([encoder.finish()]);
     profiler.afterSubmit();
-    if (paused || suspended) loop.stop();
+    if (still) loop.stop();
 
     if (statsListeners.size === 0) return;
     const stats: FrameStats = {
@@ -206,10 +232,16 @@ export function createEffectHost(
       module = effect;
       label = effect.meta.id;
       params = carryParams(effect.params, loaded?.params ?? options.initialParams);
-      const configured =
-        effect.hdr && options.allowHdr
+      const wide =
+        !(effect.hdr && options.allowHdr) && effect.wideGamut && options.allowWideGamut
+          ? configureCanvasWide(canvas, device, format)
+          : undefined;
+      const configured = wide
+        ? { context: wide.context, format, hdr: false }
+        : effect.hdr && options.allowHdr
           ? configureCanvasHdr(canvas, device, format)
           : { context: configureCanvas(canvas, device, format), format, hdr: false };
+      if (wide && !wide.wide) console.info(`[herosjourney] sRGB canvas: ${wide.reason}`);
       const { context } = configured;
       if (mounted && mounted.format !== configured.format) unmount();
       const instance = await effect.create({
@@ -219,6 +251,7 @@ export function createEffectHost(
         params,
         profiler,
         hdr: configured.hdr,
+        gamut: wide?.wide ? 'p3' : 'srgb',
       });
       built = { context, instance, format: configured.format };
     } catch (error) {
@@ -265,10 +298,22 @@ export function createEffectHost(
   applyIntensity();
   const stopIntensity = onMotionChange(applyIntensity);
 
-  const stopMotion = observeMotionEligibility(canvas, (eligible) => {
+  // Ease into a stop when someone is watching it happen and asked for it; otherwise stop now.
+  const halt = (ease: boolean) => {
+    if (ease && loop.running && mounted) easingFrom ??= loopTime;
+    else {
+      easingFrom = undefined;
+      loop.stop();
+    }
+  };
+
+  const stopMotion = observeMotionEligibility(canvas, (eligible, why) => {
     suspended = !eligible;
-    if (suspended || paused) loop.stop();
-    else if (mounted) loop.start();
+    if (suspended || paused) halt(why === 'choice' && !paused);
+    else {
+      easingFrom = undefined;
+      if (mounted) loop.start();
+    }
   });
 
   const unsubscribe = [stopMotion, stopIntensity, session.onChange(() => void mount())];
@@ -308,12 +353,14 @@ export function createEffectHost(
         if (mounted) mounted.profiler.enabled = timingRequests > 0;
       };
     },
-    pause() {
+    pause(options) {
+      const wasPlaying = !paused && !suspended;
       paused = true;
-      loop.stop();
+      halt(wasPlaying && options?.ease !== false);
     },
     resume() {
       paused = false;
+      easingFrom = undefined;
       if (mounted && !suspended) loop.start();
     },
     setResolutionScale(scale) {

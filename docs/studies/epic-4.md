@@ -16,40 +16,42 @@ Two limits on reading these numbers. Repeated runs of a light effect differ by u
 
 | Effect | Configuration | Passes | Span (ms) | Per frame (ms) | Range (ms) |
 | --- | --- | ---: | ---: | ---: | --- |
-| (floor) | one constant-colour pass | 1 | 0.07 | 0.04 | -0.31 to 0.28 |
-| (tail) | constant scene + bloom + output | 11 | 0.59 | 0.44 | -0.57 to 0.92 |
-| kaleidoscope | default | 12 | 0.85 | 1.27 | 1.18 to 1.81 |
-| kaleidoscope | preset rosette | 12 | 0.85 | 1.22 | 0.48 to 1.94 |
-| kaleidoscope | preset square mirrors | 12 | 0.85 | 1.14 | 0.26 to 1.92 |
-| kaleidoscope | preset triangle of 60° | 12 | 0.79 | 1.20 | 1.03 to 1.57 |
-| kaleidoscope | preset thirty-sixty-ninety | 12 | 0.85 | 1.22 | 1.09 to 1.70 |
-| kaleidoscope | preset eight mirrors, slow | 12 | 0.85 | 1.09 | 0.66 to 1.99 |
-| kaleidoscope | order=3 | 12 | 1.44 | 1.05 | 0.79 to 1.79 |
-| kaleidoscope | order=6 | 12 | 0.85 | 1.18 | 0.87 to 1.73 |
-| kaleidoscope | order=12 | 12 | 1.11 | 1.16 | 0.42 to 1.57 |
-| kaleidoscope | order=24 | 12 | 0.85 | 1.27 | 0.44 to 1.66 |
+| (floor) | one constant-colour pass | 1 | 0.07 | 0.09 | 0.04 to 0.74 |
+| (tail) | constant scene + bloom + output | 11 | 0.66 | 0.48 | -0.15 to 0.87 |
+| kaleidoscope | default | 12 | 0.92 | 1.18 | 0.92 to 1.88 |
+| kaleidoscope | preset rosette | 12 | 0.98 | 1.20 | 0.85 to 1.66 |
+| kaleidoscope | preset square mirrors | 12 | 0.85 | 1.35 | 0.72 to 1.73 |
+| kaleidoscope | preset triangle of 60° | 12 | 0.85 | 1.31 | 0.50 to 2.23 |
+| kaleidoscope | preset thirty-sixty-ninety | 12 | 0.98 | 1.16 | 0.61 to 1.75 |
+| kaleidoscope | preset eight mirrors, slow | 12 | 0.85 | 1.11 | 0.55 to 1.73 |
+| kaleidoscope | preset bright glass | 12 | 0.85 | 1.22 | 0.31 to 1.75 |
+| kaleidoscope | order=3 | 12 | 0.92 | 1.11 | 0.04 to 2.08 |
+| kaleidoscope | order=6 | 12 | 1.05 | 1.00 | 0.85 to 2.03 |
+| kaleidoscope | order=12 | 12 | 0.98 | 1.35 | 0.76 to 2.03 |
+| kaleidoscope | order=24 | 12 | 1.11 | 1.09 | 0.63 to 1.70 |
 
 ## 960 × 540
 
 | Effect | Configuration | Passes | Span (ms) | Per frame (ms) | Range (ms) |
 | --- | --- | ---: | ---: | ---: | --- |
-| (floor) | one constant-colour pass | 1 | 0.07 | 0.07 | -0.31 to 0.15 |
-| (tail) | constant scene + bloom + output | 9 | 0.39 | 0.37 | -0.66 to 0.63 |
-| kaleidoscope | default | 10 | 0.79 | 0.70 | 0.28 to 0.94 |
-| kaleidoscope | preset rosette | 10 | 0.98 | 0.66 | 0.46 to 1.09 |
-| kaleidoscope | preset square mirrors | 10 | 0.72 | 0.92 | 0.72 to 1.62 |
-| kaleidoscope | preset triangle of 60° | 10 | 0.98 | 0.63 | 0.11 to 0.92 |
-| kaleidoscope | preset thirty-sixty-ninety | 10 | 1.25 | 0.76 | 0.20 to 1.00 |
-| kaleidoscope | preset eight mirrors, slow | 10 | 1.18 | 0.55 | 0.24 to 1.40 |
-| kaleidoscope | order=3 | 10 | 1.31 | 0.68 | 0.24 to 0.98 |
-| kaleidoscope | order=6 | 10 | 1.70 | 0.63 | -0.02 to 0.96 |
-| kaleidoscope | order=12 | 10 | 1.44 | 0.70 | 0.13 to 1.18 |
-| kaleidoscope | order=24 | 10 | 0.92 | 0.72 | 0.31 to 0.98 |
+| (floor) | one constant-colour pass | 1 | 0.00 | 0.07 | -0.17 to 0.20 |
+| (tail) | constant scene + bloom + output | 9 | 0.39 | 0.35 | -0.15 to 0.70 |
+| kaleidoscope | default | 10 | 1.11 | 0.72 | 0.28 to 0.98 |
+| kaleidoscope | preset rosette | 10 | 1.18 | 0.66 | 0.04 to 0.83 |
+| kaleidoscope | preset square mirrors | 10 | 0.72 | 0.79 | 0.00 to 0.98 |
+| kaleidoscope | preset triangle of 60° | 10 | 1.05 | 0.66 | 0.39 to 1.27 |
+| kaleidoscope | preset thirty-sixty-ninety | 10 | 0.72 | 0.76 | 0.20 to 0.94 |
+| kaleidoscope | preset eight mirrors, slow | 10 | 1.11 | 0.55 | 0.50 to 0.92 |
+| kaleidoscope | preset bright glass | 10 | 1.18 | 0.66 | 0.28 to 1.16 |
+| kaleidoscope | order=3 | 10 | 0.98 | 0.74 | 0.46 to 0.90 |
+| kaleidoscope | order=6 | 10 | 1.18 | 0.61 | 0.07 to 0.92 |
+| kaleidoscope | order=12 | 10 | 0.72 | 0.72 | 0.52 to 0.90 |
+| kaleidoscope | order=24 | 10 | 0.79 | 0.74 | 0.52 to 1.00 |
 
 ## Download size
 
-What the page fetches to show the effect, beyond the first-load bundle (6.5 kB gzipped, no shaders).
+What the page fetches to show the effect, beyond the first-load bundle (7.5 kB gzipped, no shaders).
 
 | Effect | Chunks | Own chunk (kB gzip) | Total (kB gzip) |
 | --- | ---: | ---: | ---: |
-| kaleidoscope | 11 | 3.6 | 25.1 |
+| kaleidoscope | 19 | 3.2 | 33.4 |

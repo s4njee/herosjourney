@@ -1,23 +1,45 @@
 {
+  "chroma-bloom": {
+    "gpuMs": [
+      {
+        "device": "Metal driver on macOS Version 26.6.2 (Build 25G83)",
+        "deviceClass": "unclassified",
+        "method": "marginal",
+        "ms": 1.68
+      }
+    ],
+    "bundleKb": 29.8
+  },
   "hello": {
     "gpuMs": [
       {
         "device": "Metal driver on macOS Version 26.6.2 (Build 25G83)",
         "deviceClass": "unclassified",
         "method": "marginal",
-        "ms": 0.55
+        "ms": 0.46
       }
     ],
-    "bundleKb": 23.3
+    "bundleKb": 28.6
   },
-  "kaleidoscope": {
-    "bundleKb": 25.1,
+  "hue-cycle": {
     "gpuMs": [
       {
         "device": "Metal driver on macOS Version 26.6.2 (Build 25G83)",
         "deviceClass": "unclassified",
         "method": "marginal",
-        "ms": 1.27
+        "ms": 0.11
+      }
+    ],
+    "bundleKb": 30
+  },
+  "kaleidoscope": {
+    "bundleKb": 33.4,
+    "gpuMs": [
+      {
+        "device": "Metal driver on macOS Version 26.6.2 (Build 25G83)",
+        "deviceClass": "unclassified",
+        "method": "marginal",
+        "ms": 1.18
       }
     ]
   }

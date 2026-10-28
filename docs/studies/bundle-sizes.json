@@ -1,49 +1,114 @@
 {
   "eager": {
     "chunks": 6,
-    "raw": 13886,
-    "gzip": 6659
+    "raw": 16583,
+    "gzip": 7649
   },
   "effects": {
-    "hello": {
-      "chunks": 11,
-      "ownGzip": 900,
-      "gzip": 23878,
-      "raw": 62111,
+    "chroma-bloom": {
+      "chunks": 16,
+      "ownGzip": 1116,
+      "gzip": 30472,
+      "raw": 76886,
       "files": [
-        "assets/dose-B1KDDn0M.js",
-        "assets/fold-D_Cr0L2c.js",
+        "assets/bloom-CtUVeuO1.js",
+        "assets/chroma-bloom-DJs60gc3.js",
+        "assets/colour-caps-DDB3c2Bv.js",
+        "assets/colour-caps-H63XQVnP.js",
+        "assets/dose-BPhC_B4p.js",
         "assets/fullscreen-BDXEFvdz.js",
+        "assets/gamut-gASY8rzG.js",
         "assets/hash-bWx0F85T.js",
-        "assets/hello-7RilalNz.js",
         "assets/oklab-DA07OUH3.js",
         "assets/profiler-Bi27xYp-.js",
-        "assets/rosette-BGSonPk-.js",
         "assets/shader-xzRCRHTt.js",
         "assets/simplex-BHRnIhah.js",
-        "assets/types-ci2WwWg0.js"
+        "assets/tail-D8Nqcth_.js",
+        "assets/thinfilm-DVVYrOXS.js",
+        "assets/types-ci2WwWg0.js",
+        "assets/wide-gamut-S7l3nlMy.js"
       ],
-      "gzipKb": 23.3
+      "gzipKb": 29.8
     },
-    "kaleidoscope": {
-      "chunks": 11,
-      "ownGzip": 3666,
-      "gzip": 25735,
-      "raw": 65367,
+    "hello": {
+      "chunks": 16,
+      "ownGzip": 1066,
+      "gzip": 29276,
+      "raw": 75805,
       "files": [
-        "assets/dose-B1KDDn0M.js",
+        "assets/colour-caps-DDB3c2Bv.js",
+        "assets/dose-BPhC_B4p.js",
         "assets/fold-D_Cr0L2c.js",
         "assets/fullscreen-BDXEFvdz.js",
-        "assets/glass-Lffeepha.js",
+        "assets/gamut-gASY8rzG.js",
         "assets/hash-bWx0F85T.js",
-        "assets/kaleidoscope-BKfFpLRw.js",
+        "assets/hello-C8bBqUme.js",
+        "assets/oklab-DA07OUH3.js",
+        "assets/pattern-D_NueilR.js",
+        "assets/profiler-Bi27xYp-.js",
+        "assets/rosette-BYE-KyW0.js",
+        "assets/shader-xzRCRHTt.js",
+        "assets/simplex-BHRnIhah.js",
+        "assets/tail-D8Nqcth_.js",
+        "assets/thinfilm-DVVYrOXS.js",
+        "assets/types-ci2WwWg0.js"
+      ],
+      "gzipKb": 28.6
+    },
+    "hue-cycle": {
+      "chunks": 18,
+      "ownGzip": 1777,
+      "gzip": 30686,
+      "raw": 75006,
+      "files": [
+        "assets/colour-caps-DDB3c2Bv.js",
+        "assets/colour-caps-H63XQVnP.js",
+        "assets/cycle-BzLcpxbt.js",
+        "assets/dose-BPhC_B4p.js",
+        "assets/fullscreen-BDXEFvdz.js",
+        "assets/gamut-gASY8rzG.js",
+        "assets/hash-bWx0F85T.js",
+        "assets/hue-cycle-SIlBxYPO.js",
+        "assets/oklab-DA07OUH3.js",
+        "assets/palette-CEZ9aZNr.js",
+        "assets/palette-CKzKnFnK.js",
+        "assets/pattern-D_NueilR.js",
+        "assets/profiler-Bi27xYp-.js",
+        "assets/shader-xzRCRHTt.js",
+        "assets/tail-D8Nqcth_.js",
+        "assets/thinfilm-DVVYrOXS.js",
+        "assets/types-ci2WwWg0.js",
+        "assets/wide-gamut-S7l3nlMy.js"
+      ],
+      "gzipKb": 30
+    },
+    "kaleidoscope": {
+      "chunks": 19,
+      "ownGzip": 3248,
+      "gzip": 34185,
+      "raw": 86236,
+      "files": [
+        "assets/colour-caps-DDB3c2Bv.js",
+        "assets/colour-caps-H63XQVnP.js",
+        "assets/dose-BPhC_B4p.js",
+        "assets/fold-D_Cr0L2c.js",
+        "assets/fullscreen-BDXEFvdz.js",
+        "assets/gamut-gASY8rzG.js",
+        "assets/glass-4GxJAHxE.js",
+        "assets/hash-bWx0F85T.js",
+        "assets/kaleidoscope-Cy2NbLD2.js",
         "assets/mirror-Bz_LhH77.js",
+        "assets/oklab-DA07OUH3.js",
+        "assets/pattern-D_NueilR.js",
         "assets/profiler-Bi27xYp-.js",
         "assets/shader-xzRCRHTt.js",
         "assets/simplex-BHRnIhah.js",
-        "assets/types-ci2WwWg0.js"
+        "assets/tail-D8Nqcth_.js",
+        "assets/thinfilm-DVVYrOXS.js",
+        "assets/types-ci2WwWg0.js",
+        "assets/wide-gamut-S7l3nlMy.js"
       ],
-      "gzipKb": 25.1
+      "gzipKb": 33.4
     }
   }
 }

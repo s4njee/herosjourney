@@ -124,6 +124,7 @@ describe.skipIf(!out)('cost study', () => {
             height,
             preset: config.preset,
             params: config.params,
+            gamut: config.gamut,
             device,
             profiler: bench.profiler,
           });

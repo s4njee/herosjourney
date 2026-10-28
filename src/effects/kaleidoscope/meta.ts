@@ -12,6 +12,9 @@ export const meta: EffectMeta = {
     compute: false,
     mobile: 'untested',
     flash: 'low',
+    pattern: 'none',
+    patternPresets: ['bright glass'],
+    motionPresets: ['bright glass'],
     lightPage: 'no',
     features: { required: [] },
     fallback:

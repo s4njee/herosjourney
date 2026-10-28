@@ -50,7 +50,9 @@ describe('OKLab', () => {
 
   it('turns hue at fixed lightness, but not at fixed luminance', () => {
     // The finding behind `rotateHueAtLuminance`: perceived lightness held is not luminance held.
-    // At L 0.7 every hue is in gamut up to C 0.1; the swing grows with chroma (about 110 % × C).
+    // At L 0.7 every hue is in gamut up to C 0.1; the swing, as a share of the mean, grows with
+    // chroma (about 110 % × C). In absolute terms, which is what WCAG's 10% step is, it is far
+    // smaller: 3.8% of full white here (tests/colour-caps.test.ts).
     const muted: Vec3 = oklchToLinear([0.7, 0.05, 0]);
     const saturated: Vec3 = oklchToLinear([0.7, 0.1, 0]);
     for (const c of [muted, saturated]) {
@@ -60,6 +62,8 @@ describe('OKLab', () => {
     }
     expect(luminanceSwing(muted, rotateHue)).toBeGreaterThan(0.05);
     expect(luminanceSwing(saturated, rotateHue)).toBeGreaterThan(0.1);
+    const ys = Array.from({ length: 72 }, (_, i) => luminance(rotateHue(saturated, i / 11.46)));
+    expect(Math.max(...ys) - Math.min(...ys)).toBeLessThan(0.04);
   });
 
   it('keeps relative luminance exactly with rotateHueAtLuminance', () => {

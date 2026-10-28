@@ -12,13 +12,15 @@ The mirror arrangements are the ones a real kaleidoscope can have:
 
 These are the only groups offered, for a reason worth knowing: folding an arbitrary motif is seamless only when every edge of the fundamental domain is a mirror. In any other wallpaper group, some edge is a turn, a glide or a translation, and there an unsymmetric motif jumps. Those groups are for story 4.3's lab, with motifs made for them.
 
-`dose` sets the turn (0 to 0.15 rad/s, 0.04 at the default), how far the domain wanders over the cell, how fast the glass drifts, and how fast its hues drift. Chroma comes from `dose` too (0.02 to 0.2, 0.11 at the default).
+`dose` sets the turn (0 to 0.12 rad/s, 0.04 at the default), how far the domain wanders over the cell, how fast the glass drifts, and how fast its hues drift. Chroma comes from `dose` too (0.02 to 0.2, 0.11 at the default), and so does how bright the glass is against its ground.
+
+**Why the default glass is dim.** A kaleidoscope is the archetypal regular pattern, and the pattern check (story 2.2) says so. With six or more mirrors, the rosette repeats the same number of times a turn at every radius. With beads at full brightness on a dark ground, M0's default failed the guidance's rule in every run: a radial pattern of six pairs over 68% of a 10° field, turning, against a limit of 25%. So up to the strong dose, each bead's and shard's luminance is placed within a step of the ground (`patternStepAt`, under 0.09 on screen at 0.7, 0.045 at the default), with its lightness solved for that luminance and its chroma kept. The output skips the tonemap so the step is exact. The default is deep, dim stained glass on a plum ground. `bright glass` (`dose` 0.9) is the old brightness, and starts behind the gate.
 
 ## Cost
 
-On an Apple M1 Max on Dawn ([docs/studies/epic-4.md](../../../docs/studies/epic-4.md)): 1.1 to 1.3 ms per frame at 1080p for every arrangement, and 0.6 to 0.9 ms at 960 × 540, the tail included (0.44 ms alone). In Chrome, one frame on a 1920 × 1080 canvas reads 1.56 ms (1.49 to 1.76 over three loads, `npm run browser-check`): inside Tier A's 2 ms on this machine. The number of rosette mirrors makes no difference: 3, 6, 12 and 24 all measure 1.05 to 1.27 ms, within noise. The fold is close to free, and the cost is the cell, its mips and the tail. Texture memory: 2.8 MB for the cell and its mips, plus the tail. 3.6 kB gzipped of its own, 25 kB with the shared chunks.
+On an Apple M1 Max on Dawn ([docs/studies/epic-4.md](../../../docs/studies/epic-4.md)): 1.1 to 1.3 ms per frame at 1080p for every arrangement, and 0.6 to 0.9 ms at 960 × 540, the tail included (0.44 ms alone). In Chrome, one frame on a 1920 × 1080 canvas reads 1.74 ms (1.50 to 1.74 over three loads, `npm run browser-check`): inside Tier A's 2 ms on this machine, with less to spare than in M0 (1.56 ms), since every bead's colour is now red-capped and solved for its luminance on the CPU. The number of rosette mirrors makes no difference: 3, 6, 12 and 24 all measure 1.05 to 1.27 ms, within noise. The fold is close to free, and the cost is the cell, its mips and the tail. Texture memory: 2.8 MB for the cell and its mips, plus the tail. 3.2 kB gzipped of its own, 33 kB with the shared chunks.
 
-Flash: `low` at the default and three of the presets (one transition in one cell over eight seconds), `none` at the other two. At `dose` 1 it is still `low`, with one red flash in one cell.
+Flash `low` (single transitions in single cells). Pattern `none` up to the strong dose; `bright glass` and the rosette at `dose` 1 fail it. Motion: 2.4° a second at the default, 4.8° at 0.7. `bright glass` goes over the pattern rule and the 5° turn cap, and is gated.
 
 ## Pitfalls
 

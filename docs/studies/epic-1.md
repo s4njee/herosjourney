@@ -16,28 +16,30 @@ Two limits on reading these numbers. Repeated runs of a light effect differ by u
 
 | Effect | Configuration | Passes | Span (ms) | Per frame (ms) | Range (ms) |
 | --- | --- | ---: | ---: | ---: | --- |
-| (floor) | one constant-colour pass | 1 | 0.07 | 0.09 | 0.04 to 0.92 |
-| (tail) | constant scene + bloom + output | 11 | 0.66 | 0.52 | -0.61 to 1.16 |
-| hello | default | 2 | 0.39 | 0.55 | 0.22 to 1.27 |
-| hello | preset calm | 2 | 0.39 | 0.33 | 0.09 to 0.63 |
-| hello | preset nearly still | 2 | 0.33 | 0.28 | -0.02 to 1.09 |
-| hello | preset eight | 2 | 0.52 | 0.72 | 0.13 to 1.44 |
+| (floor) | one constant-colour pass | 1 | 0.07 | 0.11 | 0.04 to 1.03 |
+| (tail) | constant scene + bloom + output | 11 | 0.79 | 0.42 | -0.09 to 1.57 |
+| hello | default | 2 | 0.46 | 0.46 | 0.39 to 1.03 |
+| hello | preset calm | 2 | 0.46 | 0.44 | 0.26 to 0.85 |
+| hello | preset nearly still | 2 | 0.33 | 0.28 | 0.24 to 0.79 |
+| hello | preset eight | 2 | 0.59 | 0.68 | 0.24 to 1.00 |
+| hello | preset full contrast | 2 | 0.59 | 0.42 | -0.02 to 0.66 |
 
 ## 960 × 540
 
 | Effect | Configuration | Passes | Span (ms) | Per frame (ms) | Range (ms) |
 | --- | --- | ---: | ---: | ---: | --- |
-| (floor) | one constant-colour pass | 1 | 0.07 | 0.07 | 0.02 to 0.50 |
-| (tail) | constant scene + bloom + output | 9 | 0.39 | 0.33 | -0.59 to 0.72 |
-| hello | default | 2 | 0.13 | 0.11 | -0.02 to 0.83 |
-| hello | preset calm | 2 | 0.13 | 0.11 | -0.31 to 0.70 |
-| hello | preset nearly still | 2 | 0.13 | 0.09 | 0.07 to 0.57 |
-| hello | preset eight | 2 | 0.20 | 0.13 | -0.20 to 0.70 |
+| (floor) | one constant-colour pass | 1 | 0.00 | 0.07 | 0.04 to 0.31 |
+| (tail) | constant scene + bloom + output | 9 | 0.39 | 0.37 | 0.13 to 0.72 |
+| hello | default | 2 | 0.26 | 0.13 | -0.17 to 0.83 |
+| hello | preset calm | 2 | 0.26 | 0.15 | -0.20 to 0.59 |
+| hello | preset nearly still | 2 | 0.20 | 0.11 | -0.20 to 0.59 |
+| hello | preset eight | 2 | 0.33 | 0.24 | 0.07 to 0.31 |
+| hello | preset full contrast | 2 | 0.20 | 0.15 | -0.37 to 0.92 |
 
 ## Download size
 
-What the page fetches to show the effect, beyond the first-load bundle (6.5 kB gzipped, no shaders).
+What the page fetches to show the effect, beyond the first-load bundle (7.5 kB gzipped, no shaders).
 
 | Effect | Chunks | Own chunk (kB gzip) | Total (kB gzip) |
 | --- | ---: | ---: | ---: |
-| hello | 11 | 0.9 | 23.3 |
+| hello | 16 | 1.0 | 28.6 |

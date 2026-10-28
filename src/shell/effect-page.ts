@@ -3,8 +3,17 @@ import type { EffectMeta } from '../effects/types.ts';
 import { layouts, type MountedLayout } from './contexts.ts';
 import { mountEffect, type EffectHost } from './host.ts';
 import { lazyMount } from './lazy.ts';
-import { decodeParams } from './params-url.ts';
+import {
+  activePreset,
+  decodeParams,
+  PARAM_PREFIX,
+  PRESET_KEY,
+  valuesFromQuery,
+} from './params-url.ts';
+import { gateReasons } from '../gpu/safety/gate.ts';
+import { closeGate, gateAccepted, showGate } from './gate.ts';
 import { displaySupportsHdr } from '../gpu/canvas.ts';
+import { displaySupportsP3 } from '../gpu/colour/wide-gamut.ts';
 import { hrefFor, onQueryChange, readQuery, updateQuery } from './router.ts';
 import type { ShellContext, Unmount } from './types.ts';
 import './effect-page.css';
@@ -188,11 +197,37 @@ export function mountEffectPage(container: HTMLElement, shell: ShellContext, id:
   // The schema is needed to decode parameter values from the URL before the first frame.
   void loadEffect(id).then((effect) => {
     if (disposed) return;
-    const wantsHdr = readQuery().has('hdr');
+    const query = readQuery();
+    const wantsHdr = query.has('hdr');
+    const wantsP3 = query.has('p3');
+    // Story 2.6: a link to a strong setting opens paused, behind the click-to-start notice.
+    const presets = effect.presets ?? {};
+    const initial = valuesFromQuery(effect.params, presets, query);
+    const preset =
+      activePreset(effect.params, presets, initial) ?? query.get(PRESET_KEY) ?? undefined;
+    const reasons = gateReasons(meta, preset, initial);
+    const gated = reasons.length > 0 && !gateAccepted(id, preset);
     const mounted = mountEffect(shell.session, stage, id, {
-      initialParams: decodeParams(effect.params, readQuery()),
+      initialParams: decodeParams(effect.params, query),
       allowHdr: wantsHdr,
+      allowWideGamut: wantsP3,
+      paused: gated,
     });
+    if (gated) {
+      showGate(mounted.element, {
+        id,
+        preset,
+        reasons,
+        onStart: () => mounted.resume(),
+        onCalm: () => {
+          const changes: Record<string, null> = { [PRESET_KEY]: null };
+          for (const key of readQuery().keys())
+            if (key.startsWith(PARAM_PREFIX)) changes[key] = null;
+          updateQuery(changes, { replace: true });
+          mounted.resume();
+        },
+      });
+    }
     if (effect.hdr) {
       // The canvas format is fixed when the host is created, so the toggle reloads the page.
       const hdrButton = button('HDR canvas');
@@ -207,6 +242,21 @@ export function mountEffectPage(container: HTMLElement, shell: ShellContext, id:
         hdrButton.title = 'This display does not report high dynamic range.';
       }
       fullscreenButton.before(hdrButton);
+    }
+    if (effect.wideGamut) {
+      // As with HDR, the canvas colour space is fixed when the host is created.
+      const p3Button = button('P3 colour');
+      p3Button.setAttribute('aria-pressed', String(wantsP3));
+      if (displaySupportsP3()) {
+        p3Button.title = 'A display-p3 canvas: more saturated colour than sRGB can hold.';
+        p3Button.addEventListener('click', () =>
+          location.assign(hrefFor({ p3: wantsP3 ? null : '1' })),
+        );
+      } else {
+        p3Button.disabled = true;
+        p3Button.title = 'This display does not report the P3 gamut.';
+      }
+      fullscreenButton.before(p3Button);
     }
     host = mounted;
     controls = lazyMount(controlsSlot, 'controls', async () =>
@@ -224,6 +274,7 @@ export function mountEffectPage(container: HTMLElement, shell: ShellContext, id:
   return () => {
     disposed = true;
     stopListening();
+    if (host) closeGate(host.element);
     controls?.();
     hud?.();
     tab?.unmount();

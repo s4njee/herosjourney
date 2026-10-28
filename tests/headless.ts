@@ -40,6 +40,8 @@ export interface HeadlessOptions {
   device?: GPUDevice;
   /** Simulated frame rate. Default 60. */
   fps?: number;
+  /** What `ctx.gamut` says. Default 'srgb'. */
+  gamut?: 'srgb' | 'p3';
 }
 
 export interface HeadlessEffect {
@@ -95,6 +97,7 @@ export async function mountHeadless(id: string, options: HeadlessOptions): Promi
     params: params as never,
     profiler: options.profiler ?? noProfiler,
     hdr: false,
+    gamut: options.gamut ?? 'srgb',
   });
   instance.resize(width, height, 1);
 

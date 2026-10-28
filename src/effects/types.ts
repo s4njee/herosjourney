@@ -1,3 +1,4 @@
+import type { Gamut } from '../gpu/colour/wide-gamut.ts';
 import type { PassProfiler } from '../gpu/profiler.ts';
 import type { FrameTime as LoopTime } from '../gpu/types.ts';
 
@@ -53,6 +54,22 @@ export interface Scorecard {
    */
   flashPresets?: readonly string[];
   /**
+   * How close the effect comes to the regular-pattern limit at its default settings (story 2.2,
+   * `src/gpu/safety/pattern.ts`): `none` has no regular high-contrast pattern, `low` has one
+   * under the area limit, `high` covers more than it. Defaults may never be `high`.
+   */
+  pattern?: 'none' | 'low' | 'high' | 'unmeasured';
+  /**
+   * Presets over the pattern limit. `tests/pattern.test.ts` fails a preset that measures over it
+   * without being named here, and the shell starts it behind the gate (story 2.6).
+   */
+  patternPresets?: readonly string[];
+  /**
+   * Presets over the whole-field motion caps (story 2.4, `tests/motion.ts`). Checked by
+   * `tests/motion.test.ts`, and started behind the gate.
+   */
+  motionPresets?: readonly string[];
+  /**
    * Whether it reads over a light page: `yes` as it is, `underlay` only with a dark underlay or
    * backplate behind it, `no` when it needs a dark region of its own.
    */
@@ -90,7 +107,13 @@ export type ParamDef =
   | { type: 'boolean'; default: boolean; label?: string }
   /** Linear RGB, each channel 0..1. */
   | { type: 'color'; default: readonly [number, number, number]; label?: string }
-  | { type: 'select'; default: string; options: readonly string[]; label?: string };
+  | { type: 'select'; default: string; options: readonly string[]; label?: string }
+  /**
+   * A gradient palette of OKLCH stops, as `formatPalette` text (`src/gpu/colour/palette.ts`):
+   * `L C h` per stop, hue in degrees, stops separated by commas. Edited in the shell's palette
+   * editor, carried in links, baked by `createPaletteTexture`.
+   */
+  | { type: 'palette'; default: string; label?: string };
 
 /** One schema drives the control panel, the docs table, and URL state. */
 export type ParamSchema = Record<string, ParamDef>;
@@ -119,6 +142,13 @@ export interface EffectContext<S extends ParamSchema = ParamSchema> {
    * that did not ask, and false on SDR displays, in Firefox, and when configuring failed.
    */
   hdr?: boolean;
+  /**
+   * `p3` when the effect asked for a wide-gamut canvas (`EffectModule.wideGamut`) and got a
+   * confirmed `display-p3` one (story 3.3): map colours into P3 (`gamutMapOklchIn`,
+   * `safe_colour_in`) and pass this to `createHdrTail`, which converts the scene. `srgb` (or
+   * absent) otherwise: map into sRGB, by chroma.
+   */
+  gamut?: Gamut;
   canvas: HTMLCanvasElement;
   /** Live values. The shell mutates this object; read it every frame rather than copying it. */
   params: ParamValues<S>;
@@ -152,6 +182,11 @@ export interface EffectModule<S extends ParamSchema = ParamSchema> {
    * normal SDR canvas otherwise; `ctx.hdr` says which one the effect got. Default false.
    */
   hdr?: boolean;
+  /**
+   * Opt in to a `display-p3` canvas where the display covers P3 and the page allows it (story
+   * 3.3). `ctx.gamut` says which the effect got. Not combined with `hdr`: an HDR canvas wins.
+   */
+  wideGamut?: boolean;
   presets?: Readonly<Record<string, Partial<ParamValues<S>>>>;
   create(ctx: EffectContext<S>): Promise<EffectInstance>;
 }

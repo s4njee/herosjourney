@@ -1,7 +1,9 @@
 import type { FrameTime, ParamSchema } from '../../effects/types.ts';
 import type { PassProfiler } from '../profiler.ts';
 import type { RenderTarget } from '../targets.ts';
+import type { Gamut } from '../colour/wide-gamut.ts';
 import { createPostChain, type PostChain, type PostSettings } from './chain.ts';
+import { createColourStage, type ColourStage } from './colour-stage.ts';
 import { ALPHA_MODES, type AlphaMode } from './output.ts';
 
 /*
@@ -55,6 +57,9 @@ export interface TailValues {
   bloomRadius: number;
   /** How far highlights burn to white, 0..1; see `OutputSettings.whiten`. */
   burn?: number;
+  /** Present when the effect spread `COLOUR_PARAMS` (colour-stage.ts). */
+  bleed?: number;
+  iridescence?: number;
   /** Present when the effect spread `OVERLAY_PARAMS`; otherwise the output is opaque. */
   alpha?: string;
   alphaGain?: number;
@@ -68,6 +73,13 @@ export interface HdrTailOptions {
   hdr?: boolean;
   /** Start the bloom chain at half the scene size (default) or at full size. */
   bloomHalfResolution?: boolean;
+  /**
+   * `ctx.gamut`: on `p3` the scene is converted to Display P3 primaries for a display-p3 canvas
+   * (story 3.3), through the colour stage.
+   */
+  gamut?: Gamut;
+  /** Add the colour stage for `COLOUR_PARAMS` (bleed, iridescence; story 3.6). */
+  colour?: boolean;
   label?: string;
 }
 
@@ -125,12 +137,27 @@ export function createHdrTail(device: GPUDevice, options: HdrTailOptions): HdrTa
     label: options.label ?? 'tail',
   });
   const hdr = options.hdr === true;
+  // The colour stage sits between the effect and the chain, only when it has work to do.
+  const stage: ColourStage | undefined =
+    options.gamut === 'p3' || options.colour
+      ? createColourStage(device, {
+          format: chain.scene.format,
+          gamut: options.gamut ?? 'srgb',
+          label: `${options.label ?? 'tail'} colour`,
+        })
+      : undefined;
 
   return {
-    scene: chain.scene,
+    get scene() {
+      return stage ? stage.input : chain.scene;
+    },
     chain,
-    resize: (width, height) => chain.resize(width, height),
+    resize(width, height) {
+      const changed = chain.resize(width, height);
+      return (stage?.resize(width, height) ?? false) || changed;
+    },
     encode(encoder, target, time, values, profiler, overrides) {
+      stage?.encode(encoder, chain.scene.view, time.time, values, profiler);
       const settings = tailSettings(values, time, hdr);
       // Bloom overrides refine the bloom the values asked for. When the values turned it off
       // (intensity 0), an override brings it back only by naming an intensity of its own.
@@ -151,6 +178,7 @@ export function createHdrTail(device: GPUDevice, options: HdrTailOptions): HdrTa
       );
     },
     destroy() {
+      stage?.destroy();
       chain.destroy();
     },
   };

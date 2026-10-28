@@ -12,7 +12,9 @@ The HUD time is not the number the cost studies report. It is one frame measured
 
 | Effect | Started | Animates | HUD at 1080p |
 | --- | ---: | --- | --- |
-| hello | 8 of 8 | yes | 60 fps, 0.78 ms (0.69 to 0.81 over 3 loads) |
-| kaleidoscope | 8 of 8 | yes | 60 fps, 1.56 ms (1.49 to 1.76 over 3 loads) |
+| chroma-bloom | 8 of 8 | yes | 60 fps, 2.79 ms (2.56 to 2.79 over 3 loads) |
+| hello | 8 of 8 | yes | 60 fps, 1.37 ms (1.29 to 1.50 over 3 loads) |
+| hue-cycle | 8 of 8 | yes | 60 fps, 0.68 ms (0.62 to 0.75 over 3 loads) |
+| kaleidoscope | 8 of 8 | yes | 60 fps, 1.74 ms (1.50 to 1.74 over 3 loads) |
 
 No view logged a console error.
